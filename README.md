@@ -1,1 +1,2 @@
-# LearnSmasher_MYSQL_Internship
+# Task1_DDL-DCL
+
