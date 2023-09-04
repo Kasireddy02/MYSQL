@@ -1,7 +1,7 @@
--- Create the database
+-- Create the Database
 CREATE DATABASE bookManagement;
 
--- Use the database
+-- Use the Database
 USE bookManagement;
 
 -- Create the Authors table
