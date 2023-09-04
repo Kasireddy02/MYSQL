@@ -1,65 +1,49 @@
 -- Create the database
-CREATE DATABASE StudentManagement;
+CREATE DATABASE bookManagement;
 
 -- Use the database
-USE StudentManagement;
+USE bookManagement;
 
--- Create Students table
-CREATE TABLE Students (
-    StudentID INT PRIMARY KEY,
+-- Create the Authors table
+CREATE TABLE Authors (
+    AuthorID INT PRIMARY KEY,
     FirstName VARCHAR(50),
-    LastName VARCHAR(50),
-    DateOfBirth DATE,
-    Email VARCHAR(100)
+    LastName VARCHAR(50)
 );
 
--- Create Courses table
-CREATE TABLE Courses (
-    CourseID INT PRIMARY KEY,
-    CourseName VARCHAR(100),
-    Instructor VARCHAR(100)
+-- Create the Books table
+CREATE TABLE Books (
+    BookID INT PRIMARY KEY,
+    Title VARCHAR(100),
+    ISBN VARCHAR(13),
+    PublishedYear INT,
+    AuthorID INT,
+    FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID)
 );
 
--- Create Enrollments table
-CREATE TABLE Enrollments (
-    EnrollmentID INT PRIMARY KEY,
-    StudentID INT,
-    CourseID INT,
-    EnrollmentDate DATE,
-    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
-    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+-- Create the Borrowers table
+CREATE TABLE Borrowers (
+    BorrowerID INT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50)
 );
 
--- Insert values into Students table
-INSERT INTO Students (StudentID, FirstName, LastName, DateOfBirth, Email)
-VALUES
-    (1, 'John', 'Doe', '1995-05-15', 'john.doe@example.com'),
-    (2, 'Jane', 'Smith', '1998-09-20', 'jane.smith@example.com');
+-- Create a table to track book borrowings
+CREATE TABLE BookBorrowings (
+    BorrowingID INT PRIMARY KEY,
+    BorrowerID INT,
+    BookID INT,
+    BorrowedDate DATE,
+    DueDate DATE,
+    FOREIGN KEY (BorrowerID) REFERENCES Borrowers(BorrowerID),
+    FOREIGN KEY (BookID) REFERENCES Books(BookID)
+);
 
--- Insert values into Courses table
-INSERT INTO Courses (CourseID, CourseName, Instructor)
-VALUES
-    (101, 'Mathematics', 'Prof. Johnson'),
-    (102, 'History', 'Prof. Anderson');
+-- Create a user and set a password
+CREATE USER library_user IDENTIFIED BY 'password';
 
--- Insert values into Enrollments table
-INSERT INTO Enrollments (EnrollmentID, StudentID, CourseID, EnrollmentDate)
-VALUES
-    (1001, 1, 101, '2023-08-01'),
-    (1002, 1, 102, '2023-08-01'),
-    (1003, 2, 101, '2023-08-02');
-
-SELECT * FROM Students;
-
--- Create a new user
-CREATE USER 'student_admin'@'localhost' IDENTIFIED BY 'password';
-
--- Grant privileges to the user on the StudentManagement database
-GRANT SELECT, INSERT, UPDATE ON StudentManagement.* TO 'student_admin'@'localhost';
-
--- Revoke DELETE privilege from the user on Enrollments table
-REVOKE SELECT, INSERT, UPDATE ON StudentManagement.* FROM 'student_admin'@'localhost';
-
-
-
-
+-- Grant privileges to the user
+GRANT SELECT, INSERT, UPDATE, DELETE ON Authors TO library_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Books TO library_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Borrowers TO library_user;
+GRANT SELECT, INSERT ON BookBorrowings TO library_user;
